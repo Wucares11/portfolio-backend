@@ -9,9 +9,22 @@ dotenv.config();
 
 app.use(express.json())
 
+const allowedOrigins = [
+  "http://localhost:5173", // local dev
+  "https://protfolio-expertjohns-projects.vercel.app" // deployed frontend
+];
+
 //resolving error from cors
 app.use(cors({
-    origin: "http://localhost:5173",
+     origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      return callback(new Error("Not allowed by CORS"));
+    }
+  },
     methods: "POST, GET",
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
