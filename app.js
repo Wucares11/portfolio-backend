@@ -73,7 +73,7 @@ app.post("/send", (req, res) => {
 
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
-        console.log("Nodemailer error:", error); // Add this line
+        console.error("Nodemailer error:", error); // Add this line
         return res.status(400).json({ success: false, message: "Error sending email" });
       } else {
         return res.status(200).json({ success: true, message: "Email sent successfully" });
