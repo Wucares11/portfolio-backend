@@ -42,44 +42,46 @@ app.listen(port,()=>{
    console.log(`Server listening on port ${port}`);
 })
 //routing
-app.post("/send",(req,res)=>{
+app.post("/send", (req, res) => {
+  try {
+    console.log("Incoming request body:", req.body); // Log for debugging
 
-    try {
-        const {body} = req;
-        const {email,name,message} = body;
+    const { email, name, message } = req.body;
 
-        const transporter = nodemailer.createTransport({
-            service: "gmail",
-            auth: {
-                user: process.env.GMAIL_ADDRESS ,
-                pass: process.env.GMAIL_APP_PASSWORD
-            }
-        });
-
-        const mailOptions = {
-            from: email, // sender address
-            to: process.env.GMAIL_ADDRESS, // list of receivers
-            replyTo: email,
-            subject:"New message from portfolio",
-            html: `<p><strong>Name:</strong> ${name}</p>
-             <p><strong>Email:</strong> ${email}</p>
-             <p><strong>Message:</strong><br>${message}</p>`
-        };
-
-
-        transporter.sendMail(mailOptions, (error, info) => {
-            if (error) {
-                return res.status(400).json({success: false, message: "Error sending email" });
-            } else {
-                return res.status(200).json({success: true, message: "Email sent successfully"})
-            }
-        })
-    } catch (error) {
-        return res.status(500).json({
-            error: error.message,
-            message: "Internal server error"
-        });
+    // Validate fields
+    if (!name || !email || !message) {
+      return res.status(400).json({ success: false, message: "All fields are required" });
     }
 
-   
-})
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.GMAIL_ADDRESS,
+        pass: process.env.GMAIL_APP_PASSWORD,
+      },
+    });
+
+    const mailOptions = {
+      from: email,
+      to: process.env.GMAIL_ADDRESS,
+      replyTo: email,
+      subject: "New message from portfolio",
+      html: `<p><strong>Name:</strong> ${name}</p>
+             <p><strong>Email:</strong> ${email}</p>
+             <p><strong>Message:</strong><br>${message}</p>`,
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        return res.status(400).json({ success: false, message: "Error sending email" });
+      } else {
+        return res.status(200).json({ success: true, message: "Email sent successfully" });
+      }
+    });
+  } catch (error) {
+    return res.status(500).json({
+      error: error.message,
+      message: "Internal server error",
+    });
+  }
+});
