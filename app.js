@@ -10,7 +10,7 @@ app.use(express.json());
 
 const allowedOrigins = [
   "http://localhost:5173", // local dev
-  "https://protfolio-expertjohns-projects.vercel.app", // deployed frontend
+  "https://myportfolio-kappa-snowy.vercel.app", // deployed frontend
 ];
 
 //resolving error from cors
@@ -62,15 +62,18 @@ app.post("/send", (req, res) => {
       },
     });
 
-    const mailOptions = {
-      from: email,
-      to: process.env.GMAIL_ADDRESS,
-      replyTo: email,
-      subject: "New message from portfolio",
-      html: `<p><strong>Name:</strong> ${name}</p>
-             <p><strong>Email:</strong> ${email}</p>
-             <p><strong>Message:</strong><br>${message}</p>`,
-    };
+   const mailOptions = {
+  from: `"Portfolio Contact" <${process.env.GMAIL_ADDRESS}>`,
+  to: process.env.GMAIL_ADDRESS,
+  replyTo: email,
+  subject: "New message from portfolio",
+  html: `
+    <p><strong>Name:</strong> ${name}</p>
+    <p><strong>Email:</strong> ${email}</p>
+    <p><strong>Message:</strong><br/>${message}</p>
+  `,
+};
+
 
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
